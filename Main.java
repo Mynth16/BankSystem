@@ -33,7 +33,7 @@ public class Main {
                         System.out.println("Invalid action");
                 }
             }else {
-                // Optional: Provide a menu or message if a user is already logged in
+                
                 loggedinMenu();
             }
         }
@@ -118,7 +118,7 @@ public class Main {
 
         if (!depositSuccess) {
             System.out.println("Initial deposit failed. Please ensure you meet the minimum deposit requirements.");
-            return; // Exit the registration process
+            return;
         }
 
 
