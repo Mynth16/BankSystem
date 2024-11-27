@@ -1,3 +1,6 @@
+/* Name: Rafael Angelo B. Catimbang
+   Section: BCS112L-OCa */
+
 package BankSystem;
 
 import java.util.ArrayList;
