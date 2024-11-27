@@ -1,6 +1,3 @@
-/* Name: Rafael Angelo B. Catimbang
-   Section: BCS112L-OCa */
-
 package BankSystem;
 
 import java.util.ArrayList;
@@ -9,7 +6,6 @@ import java.util.Scanner;
 public class Main {
     private static final ArrayList<BankAccount> accounts = new ArrayList<>();
     private static final Scanner scanner = new Scanner(System.in);
-    private static final AccountHandler accountHandler = new AccountHandler(scanner, accounts);
     private static BankAccount loggedInAccount = null;
 
     public static void main(String[] args) {
@@ -22,12 +18,10 @@ public class Main {
 
                 switch (action) {
                     case 1:
-                        accountHandler.createNewAccount();
+                        createNewAccount();
                         break;
                     case 2:
-                        BankAccount account = accountHandler.login();
-                        if (account != null) {
-                            loggedInAccount = account;
+                        if (login()) {
                             loggedInMenu();
                         }
                         break;
@@ -38,7 +32,7 @@ public class Main {
                     default:
                         System.out.println("Invalid action");
                 }
-            } else {
+            }else {
                 loggedInMenu();
             }
         }
@@ -53,33 +47,163 @@ public class Main {
         System.out.print("Enter your choice: ");
     }
 
-
     private static int promptAction() {
-        while (true) {
+        boolean isValid = false;
+        int action = 0;
+
+        while (!isValid) {
             if (scanner.hasNextInt()) {
-                int action = scanner.nextInt();
+                action = scanner.nextInt();
                 if (action >= 1 && action <= 3) {
-                    return action;
+                    isValid = true;
+                } else {
+                    System.out.println("Invalid input");
+                    scanner.next();
                 }
+            } else {
+                System.out.println("Invalid input");
+                scanner.next();
             }
-            System.out.println("Invalid input. Please enter a valid choice.");
-            scanner.nextLine();
         }
+        return action;
+    }
+
+
+    private static void createNewAccount() {
+        BankAccountTypes accountTyped;
+
+        System.out.print("Enter account name: ");
+        scanner.nextLine();
+        String name = scanner.nextLine();
+
+        System.out.print("Enter your 4-digit PIN: ");
+        int pin = scanner.nextInt();
+
+        while (pin < 1000 || pin > 9999) {
+            System.out.print("Invalid PIN. Enter a 4-digit PIN: ");
+            pin = scanner.nextInt();
+        }
+
+        System.out.print("Select account type (1 for Savings, 2 for Checking): ");
+        int accountType = scanner.nextInt();
+
+        while (accountType != 1 && accountType != 2) {
+            System.out.print("Invalid type. Select account type (1 for Savings, 2 for Checking): ");
+            accountType = scanner.nextInt();
+        }
+
+        accountTyped = accountType == 1 ? BankAccountTypes.SAVINGS_ACCOUNT : BankAccountTypes.CURRENT_ACCOUNT;
+
+        BankAccount newAccount = accountType == 1 ? new SavingsAccount() : new CurrentAccount();
+        newAccount.setAccountName(name)
+                .setPin(pin)
+                .setAccountType(accountTyped);
+        accounts.add(newAccount);
+
+        double depositAmount = initialDeposit(newAccount.accountType);
+
+        boolean depositSuccess = ((IBankAccountActions) newAccount).initialDeposit(depositAmount);
+        if (!depositSuccess) {
+            System.out.println("Initial deposit failed. Please ensure you meet the minimum deposit requirements.");
+            return;
+        }
+
+
+        System.out.println("Registration successful!");
+        System.out.println("*********************************************************");
+    }
+
+
+
+    private static double initialDeposit(BankAccountTypes accountType) {
+        boolean isValid = false;
+        double deposit = 0;
+
+        while (!isValid) {
+            System.out.print("Enter your initial deposit: ");
+            if (scanner.hasNextDouble()) {
+                deposit = scanner.nextDouble();
+                if (accountType == BankAccountTypes.SAVINGS_ACCOUNT && deposit >= 1000) {
+                    isValid = true;
+                } else if (accountType == BankAccountTypes.CURRENT_ACCOUNT && deposit >= 5000) {
+                    isValid = true;
+                } else {
+                    System.out.println("Invalid deposit. Minimum balance is:");
+                    System.out.println(" - Savings: 1000");
+                    System.out.println(" - Checking: 5000");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a valid amount.");
+                scanner.next();
+            }
+        }
+        return deposit;
+    }
+
+
+    private static boolean login() {
+
+        System.out.print("Enter your account name: ");
+        scanner.nextLine();
+        String accountName = scanner.nextLine();
+
+        BankAccount account = findAccountByName(accountName);
+
+        if (account != null) {
+            System.out.print("Enter your 4-digit pin: ");
+            int pin = scanner.nextInt();
+
+            if (account.verifyPin(pin)) {
+                System.out.println("Login successful!");
+                loggedInAccount = account;
+                return true;
+            } else {
+                System.out.println("Invalid pin. Please try again.");
+                account.failedLoginAttempts++;
+            }
+        } else {
+            System.out.println("Invalid account. Please try again.");
+        }
+
+        if (account != null && account.failedLoginAttempts == 3) {
+            System.out.println("Account locked due to multiple failed login attempts.");
+            accounts.remove(account);
+        }
+        return false;
+    }
+
+
+    private static BankAccount findAccountByName(String accountName) {
+        for (BankAccount account : accounts) {
+            if (account.getAccountName().equalsIgnoreCase(accountName)) {
+                return account;
+            }
+        }
+        return null;
     }
 
 
     private static void loggedInMenu() {
         boolean loggedIn = true;
+        BankAccount bankAccount;
+
+
+        if (Main.loggedInAccount instanceof SavingsAccount) {
+            bankAccount = Main.loggedInAccount;
+        } else if (Main.loggedInAccount instanceof CurrentAccount) {
+            bankAccount = Main.loggedInAccount;
+        } else {
+            System.out.println("Invalid account type.");
+            return;
+        }
+
+
 
         while (loggedIn) {
             System.out.println(" ");
             System.out.println("*********************************************************");
-            System.out.println("Welcome " + loggedInAccount.getAccountName());
-            if (loggedInAccount.getAccountType() == BankAccountTypes.SAVINGS_ACCOUNT) {
-                System.out.println("Account type: Savings Account");
-            } else {
-                System.out.println("Account type: Current Account");
-            }
+            System.out.println("Welcome " + bankAccount.getAccountName());
+            System.out.println("Account type: " + bankAccount.getAccountType());
             System.out.println("1. Check Balance");
             System.out.println("2. Deposit Money");
             System.out.println("3. Withdraw Money");
@@ -92,22 +216,22 @@ public class Main {
 
             switch (action) {
                 case 1:
-                    System.out.println("Your current balance is: " + loggedInAccount.getBalance());
+                    System.out.println("Your current balance is: " + bankAccount.getBalance());
                     break;
                 case 2:
                     System.out.print("Enter deposit amount: ");
                     double depositAmount = scanner.nextDouble();
-                    loggedInAccount.deposit(depositAmount);
-                    System.out.println("Deposit successful. New balance: " + loggedInAccount.getBalance());
+                    bankAccount.deposit(depositAmount);
+                    System.out.println("Deposit successful. New balance: " + bankAccount.getBalance());
                     break;
                 case 3:
                     System.out.print("Enter withdraw amount: ");
                     double withdrawAmount = scanner.nextDouble();
-                    ((IBankAccountActions) loggedInAccount).withdraw(withdrawAmount);
+                    ((IBankAccountActions) bankAccount).withdraw(withdrawAmount);
                     break;
                 case 4:
-                    if (loggedInAccount.getAccountType() == BankAccountTypes.SAVINGS_ACCOUNT) {
-                        ((IBankAccountActions) loggedInAccount).addInterest();
+                    if (bankAccount.getAccountType() == BankAccountTypes.SAVINGS_ACCOUNT) {
+                        ((IBankAccountActions) bankAccount).addInterest();
                     } else {
                         System.out.println("This feature is not available for Current accounts.");
                     }
