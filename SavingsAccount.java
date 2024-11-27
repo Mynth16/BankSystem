@@ -1,6 +1,8 @@
 package BankSystem;
 
-public class SavingsAccount extends BankAccount implements IBankAccountActions{
+public class SavingsAccount extends BankAccount implements IBankAccountActions {
+    final double minimumBalanceSavings = 1000;
+    final double interestRate = 0.03;
 
     public SavingsAccount() {
         dailyWithdrawalLimit = 20000;
@@ -9,7 +11,9 @@ public class SavingsAccount extends BankAccount implements IBankAccountActions{
 
     @Override
     public void withdraw(double amount) {
-        if (totalWithdrawnToday + amount > dailyWithdrawalLimit) {
+        if (this.balance - amount < minimumBalanceSavings) {
+            System.out.println("Withdrawal failed. Minimum balance of " + minimumBalanceSavings + " must be maintained.");
+        } else if (totalWithdrawnToday + amount > dailyWithdrawalLimit) {
             System.out.println("Withdrawal limit exceeded for the day. Max allowed: " + (dailyWithdrawalLimit - totalWithdrawnToday));
         } else if (checkIfHasValidBalance(amount)) {
             this.balance -= amount;
@@ -22,7 +26,7 @@ public class SavingsAccount extends BankAccount implements IBankAccountActions{
 
     @Override
     public void addInterest() {
-        double interest = balance * 0.03;
+        double interest = balance * interestRate;
         this.balance += interest;
         System.out.println("Interest: " + interest);
         System.out.println("New balance: " + balance);
@@ -30,7 +34,7 @@ public class SavingsAccount extends BankAccount implements IBankAccountActions{
 
     @Override
     public boolean initialDeposit(double amount) {
-        if (amount >= 1000) {
+        if (amount >= minimumBalanceSavings) {
             this.balance += amount;
             return true;
         }
