@@ -1,14 +1,17 @@
 package BankSystem;
 
 public class CurrentAccount extends BankAccount implements IBankAccountActions {
+    final double minimumBalanceCurrent = 5000;
+
     public CurrentAccount() {
-        dailyWithdrawalLimit = 20000;
         accountType = BankAccountTypes.CURRENT_ACCOUNT;
     }
 
     @Override
     public void withdraw(double amount) {
-        if (checkIfHasValidBalance(amount)) {
+        if (this.balance - amount < minimumBalanceCurrent) {
+            System.out.println("Withdrawal failed. Minimum balance of " + minimumBalanceCurrent + " must be maintained.");
+        } else if (checkIfHasValidBalance(amount)) {
             this.balance -= amount;
             System.out.println("Withdrawal successful. New balance: " + balance);
         } else {
@@ -23,7 +26,7 @@ public class CurrentAccount extends BankAccount implements IBankAccountActions {
 
     @Override
     public boolean initialDeposit(double amount) {
-        if (amount >= 5000) {
+        if (amount >= minimumBalanceCurrent) {
             this.balance += amount;
             return true;
         }
