@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    private static ArrayList<BankAccount> accounts = new ArrayList<>();
+    private static final ArrayList<BankAccount> accounts = new ArrayList<>();
     private static final Scanner scanner = new Scanner(System.in);
     private static BankAccount loggedInAccount = null;
 
@@ -22,7 +22,7 @@ public class Main {
                         break;
                     case 2:
                         if (login()) {
-                            loggedinMenu();
+                            loggedInMenu();
                         }
                         break;
                     case 3:
@@ -33,8 +33,7 @@ public class Main {
                         System.out.println("Invalid action");
                 }
             }else {
-                
-                loggedinMenu();
+                loggedInMenu();
             }
         }
     }
@@ -71,17 +70,14 @@ public class Main {
 
 
     private static void createNewAccount() {
-        int pin = 0;
-        int accountType = 0;
-        double initialDeposit = 0.0;
-        BankAccountTypes accountTyped = BankAccountTypes.DEFAULT_ACCOUNT;
+        BankAccountTypes accountTyped;
 
         System.out.print("Enter account name: ");
         scanner.nextLine();
         String name = scanner.nextLine();
 
         System.out.print("Enter your 4-digit PIN: ");
-        pin = scanner.nextInt();
+        int pin = scanner.nextInt();
 
         while (pin < 1000 || pin > 9999) {
             System.out.print("Invalid PIN. Enter a 4-digit PIN: ");
@@ -89,12 +85,11 @@ public class Main {
         }
 
         System.out.print("Select account type (1 for Savings, 2 for Checking): ");
-        accountType = scanner.nextInt();
+        int accountType = scanner.nextInt();
 
         while (accountType != 1 && accountType != 2) {
             System.out.print("Invalid type. Select account type (1 for Savings, 2 for Checking): ");
             accountType = scanner.nextInt();
-            accountTyped = accountType == 1 ? BankAccountTypes.SAVINGS_ACCOUNT : BankAccountTypes.CURRENT_ACCOUNT;
         }
 
         accountTyped = accountType == 1 ? BankAccountTypes.SAVINGS_ACCOUNT : BankAccountTypes.CURRENT_ACCOUNT;
@@ -107,15 +102,7 @@ public class Main {
 
         double depositAmount = initialDeposit(newAccount.accountType);
 
-        boolean depositSuccess;
-        if (newAccount instanceof SavingsAccount) {
-            depositSuccess = ((SavingsAccount) newAccount).initialDeposit(depositAmount);
-        } else if (newAccount instanceof CurrentAccount) {
-            depositSuccess = ((CurrentAccount) newAccount).initialDeposit(depositAmount);
-        } else {
-            throw new IllegalArgumentException("Unsupported account type.");
-        }
-
+        boolean depositSuccess = ((IBankAccountActions) newAccount).initialDeposit(depositAmount);
         if (!depositSuccess) {
             System.out.println("Initial deposit failed. Please ensure you meet the minimum deposit requirements.");
             return;
@@ -125,6 +112,7 @@ public class Main {
         System.out.println("Registration successful!");
         System.out.println("*********************************************************");
     }
+
 
 
     private static double initialDeposit(BankAccountTypes accountType) {
@@ -154,7 +142,6 @@ public class Main {
 
 
     private static boolean login() {
-        int pin = 0;
 
         System.out.print("Enter your account name: ");
         scanner.nextLine();
@@ -164,7 +151,7 @@ public class Main {
 
         if (account != null) {
             System.out.print("Enter your 4-digit pin: ");
-            pin = scanner.nextInt();
+            int pin = scanner.nextInt();
 
             if (account.verifyPin(pin)) {
                 System.out.println("Login successful!");
@@ -180,6 +167,7 @@ public class Main {
 
         if (account != null && account.failedLoginAttempts == 3) {
             System.out.println("Account locked due to multiple failed login attempts.");
+            accounts.remove(account);
         }
         return false;
     }
@@ -195,15 +183,15 @@ public class Main {
     }
 
 
-    private static void loggedinMenu() {
+    private static void loggedInMenu() {
         boolean loggedIn = true;
         BankAccount bankAccount;
 
 
         if (Main.loggedInAccount instanceof SavingsAccount) {
-            bankAccount = (SavingsAccount) Main.loggedInAccount;
+            bankAccount = Main.loggedInAccount;
         } else if (Main.loggedInAccount instanceof CurrentAccount) {
-            bankAccount = (CurrentAccount) Main.loggedInAccount;
+            bankAccount = Main.loggedInAccount;
         } else {
             System.out.println("Invalid account type.");
             return;
@@ -212,14 +200,15 @@ public class Main {
 
 
         while (loggedIn) {
-            System.out.print("*********************************************************");
-
+            System.out.println(" ");
+            System.out.println("*********************************************************");
             System.out.println("Welcome " + bankAccount.getAccountName());
             System.out.println("Account type: " + bankAccount.getAccountType());
             System.out.println("1. Check Balance");
             System.out.println("2. Deposit Money");
             System.out.println("3. Withdraw Money");
-            System.out.println("4. Calculate Interest (Savings only)");
+            if (loggedInAccount.getAccountType() == BankAccountTypes.SAVINGS_ACCOUNT) {
+                System.out.println("4. Calculate Interest"); }
             System.out.println("5. Logout");
             System.out.print("Enter your choice: ");
 
@@ -233,6 +222,7 @@ public class Main {
                     System.out.print("Enter deposit amount: ");
                     double depositAmount = scanner.nextDouble();
                     bankAccount.deposit(depositAmount);
+                    System.out.println("Deposit successful. New balance: " + bankAccount.getBalance());
                     break;
                 case 3:
                     System.out.print("Enter withdraw amount: ");
