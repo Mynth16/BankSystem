@@ -26,7 +26,7 @@ public class CurrentAccount extends BankAccount implements IBankAccountActions {
 
     @Override
     public boolean initialDeposit(double amount) {
-        if (amount >= 5000) {
+        if (amount >= minimumBalanceCurrent) {
             this.balance += amount;
             return true;
         }
