@@ -26,7 +26,7 @@ public class SavingsAccount extends BankAccount implements IBankAccountActions {
 
     @Override
     public void addInterest() {
-        double interest = balance * 0.03;
+        double interest = balance * interestRate;
         this.balance += interest;
         System.out.println("Interest: " + interest);
         System.out.println("New balance: " + balance);
