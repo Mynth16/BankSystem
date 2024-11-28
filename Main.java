@@ -86,7 +86,7 @@ public class Main {
         }
 
         System.out.print("Select account type (1 for Savings, 2 for Checking): ");
-        accountType = scanner.nextInt();
+        int accountType = scanner.nextInt();
 
         while (accountType != 1 && accountType != 2) {
             System.out.print("Invalid type. Select account type (1 for Savings, 2 for Checking): ");
