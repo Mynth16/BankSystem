@@ -34,7 +34,7 @@ public class SavingsAccount extends BankAccount implements IBankAccountActions {
 
     @Override
     public boolean initialDeposit(double amount) {
-        if (amount >= 1000) {
+        if (amount >= minimumBalanceSavings) {
             this.balance += amount;
             return true;
         }
