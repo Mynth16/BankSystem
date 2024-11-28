@@ -71,10 +71,7 @@ public class Main {
 
 
     private static void createNewAccount() {
-        int pin = 0;
-        int accountType = 0;
-        double initialDeposit = 0.0;
-        BankAccountTypes accountTyped = BankAccountTypes.DEFAULT_ACCOUNT;
+        BankAccountTypes accountTyped;
 
         System.out.print("Enter account name: ");
         scanner.nextLine();
