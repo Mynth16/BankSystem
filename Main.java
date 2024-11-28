@@ -203,7 +203,7 @@ public class Main {
         if (Main.loggedInAccount instanceof SavingsAccount) {
             bankAccount = Main.loggedInAccount;
         } else if (Main.loggedInAccount instanceof CurrentAccount) {
-            bankAccount = (CurrentAccount) Main.loggedInAccount;
+            bankAccount = Main.loggedInAccount;
         } else {
             System.out.println("Invalid account type.");
             return;
