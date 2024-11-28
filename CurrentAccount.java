@@ -4,7 +4,6 @@ public class CurrentAccount extends BankAccount implements IBankAccountActions {
     final double minimumBalanceCurrent = 5000;
 
     public CurrentAccount() {
-        dailyWithdrawalLimit = 20000;
         accountType = BankAccountTypes.CURRENT_ACCOUNT;
     }
 
