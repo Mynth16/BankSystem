@@ -1,6 +1,8 @@
 package BankSystem;
 
-public class SavingsAccount extends BankAccount implements IBankAccountActions{
+public class SavingsAccount extends BankAccount implements IBankAccountActions {
+    final double minimumBalanceSavings = 1000;
+    final double interestRate = 0.03;
 
     public SavingsAccount() {
         dailyWithdrawalLimit = 20000;
