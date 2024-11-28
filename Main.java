@@ -195,7 +195,7 @@ public class Main {
     }
 
 
-    private static void loggedinMenu() {
+    private static void loggedInMenu() {
         boolean loggedIn = true;
         BankAccount bankAccount;
 
