@@ -212,8 +212,8 @@ public class Main {
 
 
         while (loggedIn) {
-            System.out.print("*********************************************************");
-
+            System.out.println(" ");
+            System.out.println("*********************************************************");
             System.out.println("Welcome " + bankAccount.getAccountName());
             System.out.println("Account type: " + bankAccount.getAccountType());
             System.out.println("1. Check Balance");
