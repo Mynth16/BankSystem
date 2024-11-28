@@ -11,7 +11,9 @@ public class SavingsAccount extends BankAccount implements IBankAccountActions {
 
     @Override
     public void withdraw(double amount) {
-        if (totalWithdrawnToday + amount > dailyWithdrawalLimit) {
+        if (this.balance - amount < minimumBalanceSavings) {
+            System.out.println("Withdrawal failed. Minimum balance of " + minimumBalanceSavings + " must be maintained.");
+        } else if (totalWithdrawnToday + amount > dailyWithdrawalLimit) {
             System.out.println("Withdrawal limit exceeded for the day. Max allowed: " + (dailyWithdrawalLimit - totalWithdrawnToday));
         } else if (checkIfHasValidBalance(amount)) {
             this.balance -= amount;
