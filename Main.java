@@ -234,6 +234,7 @@ public class Main {
                     System.out.print("Enter deposit amount: ");
                     double depositAmount = scanner.nextDouble();
                     bankAccount.deposit(depositAmount);
+                    System.out.println("Deposit successful. New balance: " + bankAccount.getBalance());
                     break;
                 case 3:
                     System.out.print("Enter withdraw amount: ");
