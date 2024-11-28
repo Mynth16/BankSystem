@@ -78,7 +78,7 @@ public class Main {
         String name = scanner.nextLine();
 
         System.out.print("Enter your 4-digit PIN: ");
-        pin = scanner.nextInt();
+        int pin = scanner.nextInt();
 
         while (pin < 1000 || pin > 9999) {
             System.out.print("Invalid PIN. Enter a 4-digit PIN: ");
