@@ -1,10 +1,13 @@
+/* Name: Rafael Angelo B. Catimbang
+   Section: BCS112L-OCa */
+
 package BankSystem;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    private static ArrayList<BankAccount> accounts = new ArrayList<>();
+    private static final ArrayList<BankAccount> accounts = new ArrayList<>();
     private static final Scanner scanner = new Scanner(System.in);
     private static BankAccount loggedInAccount = null;
 
@@ -22,7 +25,7 @@ public class Main {
                         break;
                     case 2:
                         if (login()) {
-                            loggedinMenu();
+                            loggedInMenu();
                         }
                         break;
                     case 3:
@@ -33,8 +36,7 @@ public class Main {
                         System.out.println("Invalid action");
                 }
             }else {
-                
-                loggedinMenu();
+                loggedInMenu();
             }
         }
     }
@@ -91,7 +93,6 @@ public class Main {
         while (accountType != 1 && accountType != 2) {
             System.out.print("Invalid type. Select account type (1 for Savings, 2 for Checking): ");
             accountType = scanner.nextInt();
-            accountTyped = accountType == 1 ? BankAccountTypes.SAVINGS_ACCOUNT : BankAccountTypes.CURRENT_ACCOUNT;
         }
 
         accountTyped = accountType == 1 ? BankAccountTypes.SAVINGS_ACCOUNT : BankAccountTypes.CURRENT_ACCOUNT;
@@ -104,15 +105,7 @@ public class Main {
 
         double depositAmount = initialDeposit(newAccount.accountType);
 
-        boolean depositSuccess;
-        if (newAccount instanceof SavingsAccount) {
-            depositSuccess = ((SavingsAccount) newAccount).initialDeposit(depositAmount);
-        } else if (newAccount instanceof CurrentAccount) {
-            depositSuccess = ((CurrentAccount) newAccount).initialDeposit(depositAmount);
-        } else {
-            throw new IllegalArgumentException("Unsupported account type.");
-        }
-
+        boolean depositSuccess = ((IBankAccountActions) newAccount).initialDeposit(depositAmount);
         if (!depositSuccess) {
             System.out.println("Initial deposit failed. Please ensure you meet the minimum deposit requirements.");
             return;
@@ -122,6 +115,7 @@ public class Main {
         System.out.println("Registration successful!");
         System.out.println("*********************************************************");
     }
+
 
 
     private static double initialDeposit(BankAccountTypes accountType) {
@@ -151,7 +145,6 @@ public class Main {
 
 
     private static boolean login() {
-        int pin = 0;
 
         System.out.print("Enter your account name: ");
         scanner.nextLine();
@@ -161,7 +154,7 @@ public class Main {
 
         if (account != null) {
             System.out.print("Enter your 4-digit pin: ");
-            pin = scanner.nextInt();
+            int pin = scanner.nextInt();
 
             if (account.verifyPin(pin)) {
                 System.out.println("Login successful!");
@@ -177,6 +170,7 @@ public class Main {
 
         if (account != null && account.failedLoginAttempts == 3) {
             System.out.println("Account locked due to multiple failed login attempts.");
+            accounts.remove(account);
         }
         return false;
     }
