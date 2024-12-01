@@ -17,6 +17,12 @@ public class AccountHandler {
         scanner.nextLine();
         String name = scanner.nextLine();
 
+        if (findAccountByName(name) != null) {
+            System.out.println("Account name already exists. Please choose a different name.");
+            System.out.println(" ");
+            return;
+        }
+
         System.out.print("Enter your 4-digit PIN: ");
         int pin = scanner.nextInt();
         while (pin < 1000 || pin > 9999) {
