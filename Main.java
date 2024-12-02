@@ -4,6 +4,7 @@
 package BankSystem;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -18,7 +19,7 @@ public class Main {
         while (!closed) {
             if (loggedInAccount == null) {
                 startPage();
-                int action = promptAction();
+                int action = getValidatedInt("Invalid input. Please enter a valid choice.", 3);
 
                 switch (action) {
                     case 1:
@@ -54,20 +55,6 @@ public class Main {
     }
 
 
-    private static int promptAction() {
-        while (true) {
-            if (scanner.hasNextInt()) {
-                int action = scanner.nextInt();
-                if (action >= 1 && action <= 3) {
-                    return action;
-                }
-            }
-            System.out.println("Invalid input. Please enter a valid choice.");
-            scanner.nextLine();
-        }
-    }
-
-
     private static void loggedInMenu() {
         boolean loggedIn = true;
 
@@ -88,14 +75,7 @@ public class Main {
             System.out.println("5. Logout");
             System.out.print("Enter your choice: ");
 
-            int action;
-            try {
-                action = scanner.nextInt();
-            } catch (Exception e) {
-                System.out.println("Invalid input. Please try again.");
-                scanner.nextLine();
-                continue;
-            }
+            int action = getValidatedInt("Invalid input.", 5);
 
             switch (action) {
                 case 1:
@@ -126,6 +106,22 @@ public class Main {
                     break;
                 default:
                     System.out.println("Invalid input. Please try again.");
+            }
+        }
+    }
+
+    private static int getValidatedInt(String errorMessage, int max) {
+        while (true) {
+            try {
+                int input = scanner.nextInt();
+                if (input >= 1 && input <= max) {
+                    return input;
+                } else {
+                    System.out.println(errorMessage);
+                }
+            } catch (InputMismatchException e) {
+                System.out.println(errorMessage);
+                scanner.next();
             }
         }
     }
