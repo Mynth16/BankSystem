@@ -83,13 +83,13 @@ public class Main {
                     break;
                 case 2:
                     System.out.print("Enter deposit amount: ");
-                    double depositAmount = scanner.nextDouble();
+                    int depositAmount = getValidatedInt("Invalid input. Please enter a valid amount.", Integer.MAX_VALUE);
                     loggedInAccount.deposit(depositAmount);
                     System.out.println("Deposit successful. New balance: " + loggedInAccount.getBalance());
                     break;
                 case 3:
                     System.out.print("Enter withdraw amount: ");
-                    double withdrawAmount = scanner.nextDouble();
+                    int withdrawAmount = getValidatedInt("Invalid input. Please enter a valid amount.", Integer.MAX_VALUE);
                     ((IBankAccountActions) loggedInAccount).withdraw(withdrawAmount);
                     break;
                 case 4:
