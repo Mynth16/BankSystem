@@ -92,7 +92,7 @@ public class Main {
             try {
                 action = scanner.nextInt();
             } catch (Exception e) {
-                System.out.println("Invalid input. Please try again." + e);
+                System.out.println("Invalid input. Please try again.");
                 scanner.nextLine();
                 continue;
             }

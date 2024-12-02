@@ -18,4 +18,3 @@ public interface IBankAccount {
     double getTotalWithdrawnToday();
     double getDailyWithdrawalLimit();
 }
-
