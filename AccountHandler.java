@@ -17,6 +17,10 @@ public class AccountHandler {
         System.out.print("Enter account name: ");
         scanner.nextLine();
         String name = scanner.nextLine();
+        if (name.isEmpty()) {
+            System.out.println("Input cannot be empty.");
+            return;
+        }
 
         if (findAccountByName(name) != null) {
             System.out.println("Account name already exists. Please choose a different name.");
@@ -27,25 +31,31 @@ public class AccountHandler {
         int pin = getValidatedInt("Enter a 4-digit pin: ", "Invalid pin. Please enter a 4-digit pin.", 1000, 9999);
         int accountType = getValidatedInt("Select account type (1. Savings, 2. Checking): ", "Invalid account type. Please enter 1 for Savings or 2 for Checking.", 1, 2);
 
+        // accountTyped is just a local variable, read this as
+        // IF accountType is 1, THEN accountTyped is SAVINGS_ACCOUNT, ELSE accountTyped is CURRENT_ACCOUNT
+        // then it creates a new account based on the account type, adds the specified values to the specific account object and then adds it to the list
+
         BankAccountTypes accountTyped = accountType == 1 ? BankAccountTypes.SAVINGS_ACCOUNT : BankAccountTypes.CURRENT_ACCOUNT;
         BankAccount newAccount = accountType == 1 ? new SavingsAccount() : new CurrentAccount();
         newAccount.setAccountName(name).setPin(pin).setAccountType(accountTyped);
         accounts.add(newAccount);
 
-        initialDeposit(newAccount.accountType);
+        double depositAmount = initialDeposit(newAccount.accountType);
+        newAccount.deposit(depositAmount);
 
         System.out.println("Registration successful!");
         System.out.println("*********************************************************");
     }
 
 
-    private void initialDeposit(BankAccountTypes accountType) {
+    private double initialDeposit(BankAccountTypes accountType) {
         boolean isValid = false;
+        double deposit = 0.0;
 
         while (!isValid) {
             System.out.print("Enter your initial deposit: ");
             if (scanner.hasNextDouble()) {
-                double deposit = scanner.nextDouble();
+                deposit = scanner.nextDouble();
                 if (accountType == BankAccountTypes.SAVINGS_ACCOUNT && deposit >= 1000.0) {
                     isValid = true;
                 } else if (accountType == BankAccountTypes.CURRENT_ACCOUNT && deposit >= 5000.0) {
@@ -60,6 +70,7 @@ public class AccountHandler {
                 scanner.next();
             }
         }
+        return deposit;
     }
 
 
