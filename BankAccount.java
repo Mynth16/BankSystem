@@ -1,7 +1,6 @@
 package BankSystem;
 
-public class BankAccount implements IBankAccount
-{
+public class BankAccount implements IBankAccount {
     private String accountName;
     private int pin;
     protected BankAccountTypes accountType;
