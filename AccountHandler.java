@@ -40,39 +40,22 @@ public class AccountHandler {
         newAccount.setAccountName(name).setPin(pin).setAccountType(accountTyped);
         accounts.add(newAccount);
 
-        double depositAmount = initialDeposit(newAccount.accountType);
-        newAccount.deposit(depositAmount);
+        double amount = getValidatedInt("Enter your initial deposit: ",
+                "Invalid deposit. Minimum balance is: " + (accountType == 1 ? 1000 : 5000),
+                accountType == 1 ? 1000 : 5000,
+                Integer.MAX_VALUE);
+
+        if (((IBankAccountActions) newAccount).initialDeposit(amount)) {
+            System.out.println("Deposit successful. New balance: " + newAccount.getBalance());
+        } else {
+            System.out.println("Deposit failed. Minimum balance of " + (accountType == 1 ? 1000 : 5000) + " must be maintained.");
+            accounts.remove(newAccount);
+            return;
+        }
 
         System.out.println("Registration successful!");
         System.out.println("*********************************************************");
     }
-
-
-    private double initialDeposit(BankAccountTypes accountType) {
-        boolean isValid = false;
-        double deposit = 0.0;
-
-        while (!isValid) {
-            System.out.print("Enter your initial deposit: ");
-            if (scanner.hasNextDouble()) {
-                deposit = scanner.nextDouble();
-                if (accountType == BankAccountTypes.SAVINGS_ACCOUNT && deposit >= 1000.0) {
-                    isValid = true;
-                } else if (accountType == BankAccountTypes.CURRENT_ACCOUNT && deposit >= 5000.0) {
-                    isValid = true;
-                } else {
-                    System.out.println("Invalid deposit. Minimum balance is:");
-                    System.out.println(" - Savings: 1000");
-                    System.out.println(" - Checking: 5000");
-                }
-            } else {
-                System.out.println("Invalid input. Please enter a valid amount.");
-                scanner.next();
-            }
-        }
-        return deposit;
-    }
-
 
     public BankAccount login() {
 
