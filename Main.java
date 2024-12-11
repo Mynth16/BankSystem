@@ -22,17 +22,17 @@ public class Main {
                 int action = getValidatedInt("Invalid input. Please enter a valid choice.", 3);
 
                 switch (action) {
-                    case 1:
+                    case 1: // Register
                         accountHandler.createNewAccount();
                         break;
-                    case 2:
+                    case 2: // Login
                         BankAccount account = accountHandler.login();
                         if (account != null) {
                             loggedInAccount = account;
                             loggedInMenu();
                         }
                         break;
-                    case 3:
+                    case 3: // Exit
                         System.out.println("Exiting...");
                         closed = true;
                         break;
@@ -55,6 +55,7 @@ public class Main {
     }
 
 
+    // Displays account name and type, and allows the user to check balance, deposit, withdraw, calculate interest, or logout
     private static void loggedInMenu() {
         boolean loggedIn = true;
 

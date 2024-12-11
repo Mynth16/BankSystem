@@ -8,11 +8,13 @@ public class AccountHandler {
     private final Scanner scanner;
     private final List<BankAccount> accounts;
 
+    // constructor that takes a scanner and a list of BankAccount objects as input
     public AccountHandler(Scanner scanner, List<BankAccount> accounts) {
         this.scanner = scanner;
         this.accounts = accounts;
     }
 
+    // method to Register
     public void createNewAccount() {
         System.out.print("Enter account name: ");
         scanner.nextLine();
@@ -40,11 +42,14 @@ public class AccountHandler {
         newAccount.setAccountName(name).setPin(pin).setAccountType(accountTyped);
         accounts.add(newAccount);
 
+        // read the minimum as 1000 if accountType is 1, else 5000
         double amount = getValidatedInt("Enter your initial deposit: ",
                 "Invalid deposit. Minimum balance is: " + (accountType == 1 ? 1000 : 5000),
                 accountType == 1 ? 1000 : 5000,
                 Integer.MAX_VALUE);
 
+        // initialDeposit is a boolean method in the IBankAccountActions interface, so it needs to be cast to that interface to be called
+        // it returns true if the deposit was successful, then deposits the specified amount in the new account
         if (((IBankAccountActions) newAccount).initialDeposit(amount)) {
             System.out.println("Deposit successful. New balance: " + newAccount.getBalance());
         } else {
@@ -57,6 +62,8 @@ public class AccountHandler {
         System.out.println("*********************************************************");
     }
 
+    // login method that takes an account name and pin as input and returns the account object if it exists in the list
+    // failed login attempts are tracked individually for each account
     public BankAccount login() {
 
         System.out.print("Enter your account name: ");
@@ -89,6 +96,7 @@ public class AccountHandler {
     }
 
 
+    // takes a string input and returns the account object if it exists in the list
     private BankAccount findAccountByName(String accountName) {
         for (BankAccount account : accounts) {
             if (account.getAccountName().equalsIgnoreCase(accountName)) {
